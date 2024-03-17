@@ -49,6 +49,8 @@ public class SecurityConfig {
                         authorize -> authorize.requestMatchers(HttpMethod.GET,"/users").hasAnyRole("ADMIN", "OWNER")
 //                                .requestMatchers("/api/users/address").permitAll()
                                 .requestMatchers("/api/restaurant").hasAnyRole("OWNER", "ADMIN", "USER")
+                                .requestMatchers("/api/category/**").hasAnyRole("OWNER", "ADMIN")
+                                .requestMatchers("/auth/sign-in").permitAll()
                                 .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtTokenValidator(), BasicAuthenticationFilter.class)

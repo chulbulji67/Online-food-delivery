@@ -4,7 +4,9 @@ import com.restaurant.dto.ItemDto;
 import com.restaurant.exception.categoryexception.CategoryNotFoundException;
 import com.restaurant.exception.itemexception.ItemNotFoundException;
 import com.restaurant.exception.menuexception.MenuNotFoundException;
+import com.restaurant.model.Category;
 import com.restaurant.model.Item;
+import com.restaurant.model.Menu;
 import com.restaurant.repository.CategoryRepository;
 import com.restaurant.repository.ItemRepository;
 import com.restaurant.repository.MenuRepository;
@@ -27,8 +29,11 @@ public class ItemServiceImpl implements ItemService{
     @Override
     public ItemDto addItemInMenu(Item item) {
         //check if menu exist in which you want to add item
-        menuRepository.findById(item.getMenu().getId()).orElseThrow(()-> new MenuNotFoundException("Menu Not found in which You want to add Item"));
-        menuRepository.findById(item.getCategory().getId()).orElseThrow(()-> new CategoryNotFoundException("Menu Not found in which You want to add Item"));
+
+        Menu menu = menuRepository.findById(item.getMenu().getId()).orElseThrow(() -> new MenuNotFoundException("Menu Not found in which You want to add Item"));
+        Category category = categoryRepository.findById(item.getCategory().getId()).orElseThrow(() -> new CategoryNotFoundException("Category Not found in which You want to add Item"));
+        item.setMenu(menu);
+        item.setCategory(category);
         return mapItemToItemDto(itemRepository.save(item));
     }
 
@@ -77,6 +82,7 @@ public class ItemServiceImpl implements ItemService{
                 .categoryName(item.getCategory().getName())
                 .description(item.getDescription())
                 .price(item.getPrice())
+                .categoryName(item.getCategory().getName())
                 .build();
     }
 }

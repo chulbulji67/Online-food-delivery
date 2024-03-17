@@ -50,9 +50,11 @@ public class DeliveryPersonServiceImpl implements DeliveryPersonService{
     }
 
     @Override
-    public DeliveryPersonDto updateAvailability(Long id, boolean availability) {
+    public DeliveryPersonDto updateAvailability(Long id, DeliveryPerson updatedDeliveryPerson) {
+        System.out.println("Availability is"+updatedDeliveryPerson.isAvailability());
         DeliveryPerson deliveryPerson = deliveryPersonRepository.findById(id).orElseThrow(()->new DeliveryPersonNotFoundException("Delivery Person not found with the given Id"));
-       deliveryPerson.setAvailability(availability);
+       deliveryPerson.setAvailability(updatedDeliveryPerson.isAvailability());
+       System.out.println("Availability is"+updatedDeliveryPerson.isAvailability());
         return mapDeliveryPersonToDeliveryPersonDto(deliveryPersonRepository.save(deliveryPerson));
     }
 

@@ -8,12 +8,14 @@ import com.restaurant.exception.restaurantexception.RestaurantNotFoundException;
 import com.restaurant.exception.userexception.UserNotFoundException;
 import com.restaurant.model.*;
 import com.restaurant.repository.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class OrderServiceImpl implements OrderService{
 
     @Autowired
@@ -58,36 +60,43 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public List<OrderDto> getAllOrderOfARestaurantById(long restaurantId) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(()->new RestaurantNotFoundException("User Not found for which you are fetching all orders"));
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(()->new RestaurantNotFoundException("Restaurant Not found for which you are fetching all orders"));
         List<Order> orders = orderRepository.findByRestaurant(restaurant);
         return orders.stream().map(OrderServiceImpl::mapOrderToOrderDto).toList();
     }
 
     @Override
     public OrderDto updateOrderById(long id, Order updateOrder) {
+        log.info("Working");
         Order order = orderRepository.findById(id).orElseThrow(()->new OrderNotFoundExceptionException("Order Not Found which You want to update"));
         if(updateOrder.getDeliveryAddress() != null){
             order.setDeliveryAddress(updateOrder.getDeliveryAddress());
         }
+        log.info("price is {}", order.getTotalAmount());
         if(updateOrder.getTotalAmount() != 0){
             order.setTotalAmount(updateOrder.getTotalAmount());
+        }
+        if(updateOrder.getStatus() != null){
+            order.setStatus(updateOrder.getStatus());
         }
         return mapOrderToOrderDto(orderRepository.save(order));
     }
 
     @Override
     public String cancelOrderById(long orderId) {
-        orderRepository.findById(orderId).orElseThrow(()->new OrderNotFoundExceptionException("Order Not Found which You want to update"));
+        orderRepository.findById(orderId).orElseThrow(()->new OrderNotFoundExceptionException("Order Not Found which You want to Cancle"));
         orderRepository.deleteById(orderId);
         return "Order Canceled Successfully";
     }
 
     public static OrderDto mapOrderToOrderDto(Order order){
         return OrderDto.builder()
+                .id(order.getId())
+                .userName(order.getUser().getUsername())
                 .orderDate(order.getOrderDate())
                 .deliveryAddressId(order.getDeliveryAddress().getId())
                 .status(order.getStatus())
-                .reviewText(order.getReview().getReviewText())
+//                .reviewText(order.getReview().getReviewText())
                 .totalAmount(order.getTotalAmount())
                 .deliveryPersonName(order.getDeliveryPerson().getUser().getUsername())
                 .restaurantName(order.getRestaurant().getName())

@@ -7,6 +7,7 @@ import com.restaurant.exception.userexception.UserNotFoundException;
 import com.restaurant.model.User;
 import com.restaurant.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,8 @@ public class UserServiceImpl implements UserService{
     @Autowired
     UserRepository userRepo;
 
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
     @Override
     public UserDto registerUser(User user) {
         User existingUser = userRepo.findByEmail(user.getEmail());
@@ -63,6 +66,7 @@ public class UserServiceImpl implements UserService{
             existingUser.setUsername(user.getUsername());
         }
         if(user.getPassword() != null){
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             existingUser.setPassword(user.getPassword());
         }
         return mapUserToUserDto(userRepo.save(existingUser));
