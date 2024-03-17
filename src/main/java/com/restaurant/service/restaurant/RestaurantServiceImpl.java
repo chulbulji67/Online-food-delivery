@@ -2,7 +2,9 @@ package com.restaurant.service.restaurant;
 
 import com.restaurant.dto.RestaurantDto;
 import com.restaurant.exception.restaurantexception.RestaurantNotFoundException;
+import com.restaurant.model.Address;
 import com.restaurant.model.Restaurant;
+import com.restaurant.repository.AddressRepository;
 import com.restaurant.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +17,14 @@ public class RestaurantServiceImpl implements RestaurantService{
     @Autowired
     RestaurantRepository restaurantRepository;
 
+    @Autowired
+    AddressRepository addressRepository;
+
     @Override
     public RestaurantDto addRestaurant(Restaurant restaurant) {
+        Address address = addressRepository.findById(restaurant.getAddress().getId()).orElse(restaurant.getAddress());
+        addressRepository.save(address);
+        restaurant.setAddress(address);
         return mapRestaurantToRestaurantDto(restaurantRepository.save(restaurant));
     }
 
@@ -80,6 +88,7 @@ public class RestaurantServiceImpl implements RestaurantService{
                 .open(restaurant.isOpen())
                 .openingHours(restaurant.getOpeningHours())
                 .registrationDate(restaurant.getRegistrationDate())
+
                 .build();
     }
 }

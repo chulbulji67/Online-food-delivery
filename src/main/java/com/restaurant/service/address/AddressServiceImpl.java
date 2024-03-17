@@ -7,12 +7,14 @@ import com.restaurant.model.Address;
 import com.restaurant.model.User;
 import com.restaurant.repository.AddressRepository;
 import com.restaurant.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class AddressServiceImpl implements AddressService{
 
     @Autowired
@@ -22,6 +24,7 @@ public class AddressServiceImpl implements AddressService{
 
     @Override
     public AddressDto addNewAddress(Address address) {
+        log.info("new Address to to added method");
         //Check User exist
         User user = userRepository.findById(address.getUser().getId()).orElseThrow(() -> new UserNotFoundException("User Not found which you want to add Address"));
         address.setUser(user);
@@ -30,19 +33,21 @@ public class AddressServiceImpl implements AddressService{
 
     @Override
     public AddressDto getAddressByAddressId(long id) {
-        Address address = addressRepository.findById(id).orElseThrow(()->new AddressNotFoundExceptin("Address not found by id"));
+        Address address = addressRepository.findById(id).orElseThrow(()-> {throw new AddressNotFoundExceptin("Address not found by id");});
 
         return mapAddressToAddressDto(address);
     }
 
     @Override
     public List<AddressDto> getAllAddress() {
-        return addressRepository.findAll().stream().map(this::mapAddressToAddressDto).toList();
+        List<Address> all = addressRepository.findAll();
+        return all.stream().map(this::mapAddressToAddressDto).toList();
     }
 
     @Override
     public AddressDto updateAddressByAddressId(long id, Address address) {
         Address existingAddress = addressRepository.findById(id).orElseThrow(()->new AddressNotFoundExceptin("Address not found by id"));
+        System.out.println("existing address"+existingAddress.getAddressLine1());
         if(address.getAddressLine1() != null){
             existingAddress.setAddressLine1(address.getAddressLine1());
         }
@@ -79,6 +84,7 @@ public class AddressServiceImpl implements AddressService{
                 .zipCode(address.getZipCode())
                 .country(address.getCountry())
                 .id(address.getId())
+
                 .build();
     }
 }

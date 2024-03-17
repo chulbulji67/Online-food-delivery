@@ -23,7 +23,7 @@ public class Restaurant {
 
 
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "contact_information_id")
     private ContactInformation contactInformation;
 
