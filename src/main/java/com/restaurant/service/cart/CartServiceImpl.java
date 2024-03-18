@@ -8,7 +8,9 @@ import com.restaurant.model.User;
 import com.restaurant.repository.CartRepository;
 import com.restaurant.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CartServiceImpl implements CartService {
 
     @Autowired

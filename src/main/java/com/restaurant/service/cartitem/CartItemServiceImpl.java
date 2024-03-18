@@ -55,6 +55,8 @@ public class CartItemServiceImpl implements CartItemService{
                 .id(cartItem.getId())
                 .itemName(cartItem.getItem().getName())
                 .quantity(cartItem.getQuantity())
+                .cartId(cartItem.getCart().getId())
+                .itemId(cartItem.getItem().getId())
                 .build();
     }
 
